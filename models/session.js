@@ -1,0 +1,36 @@
+import crypto from "node:crypto";
+import database from "infra/database.js";
+
+const EXPIRATION_IN_MILLISECONDS = 60 * 60 * 24 * 30 * 1000; // 30 days
+
+async function create(userId) {
+  // Why 48 bytes? We convert them into alphanumeric characters where each byte turns into 2 characters resulting in the 96 which is the max length for a token in the database
+  const token = crypto.randomBytes(48).toString("hex");
+  const expiresAt = new Date(Date.now() + EXPIRATION_IN_MILLISECONDS);
+  const newSession = await runInsertQuery(token, userId, expiresAt);
+
+  return newSession;
+
+  async function runInsertQuery(token, userId, expiresAt) {
+    const result = await database.query({
+      text: `
+        INSERT INTO
+          sessions
+            (token, user_id, expires_at)
+        VALUES
+          ($1, $2, $3)
+        RETURNING
+          *
+      ;`,
+      values: [token, userId, expiresAt],
+    });
+    return result.rows[0];
+  }
+}
+
+const session = {
+  create,
+  EXPIRATION_IN_MILLISECONDS,
+};
+
+export default session;
