@@ -27,7 +27,7 @@ describe("GET /api/v1/users/[username]", () => {
         id: responseBody.id,
         username: "MesmoCase",
         email: "mesmo.case@gmail.com",
-        features: responseBody.features,
+        features: ["read:activation_token"],
         password: responseBody.password,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
@@ -37,7 +37,7 @@ describe("GET /api/v1/users/[username]", () => {
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
 
-      expect(responseBody.features.length).toBe(0);
+      expect(responseBody.features.length).toBe(1);
     });
     test("With case mismatch", async () => {
       await orchestrator.createUser({
@@ -56,7 +56,7 @@ describe("GET /api/v1/users/[username]", () => {
         id: responseBody.id,
         username: "CaseDiferente",
         email: "case.diferente@gmail.com",
-        features: responseBody.features,
+        features: ["read:activation_token"],
         password: responseBody.password,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
@@ -66,7 +66,7 @@ describe("GET /api/v1/users/[username]", () => {
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
 
-      expect(responseBody.features.length).toBe(0);
+      expect(responseBody.features.length).toBe(1);
     });
     test("With nonexistent username", async () => {
       const response = await fetch(

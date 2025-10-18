@@ -38,7 +38,7 @@ describe("GET /api/v1/user", () => {
         id: createdUser.id,
         email: createdUser.email,
         password: createdUser.password,
-        features: createdUser.features,
+        features: ["read:activation_token"],
         username: "UserWithValidSession",
         created_at: createdUser.created_at.toISOString(),
         updated_at: createdUser.updated_at.toISOString(),
@@ -48,7 +48,7 @@ describe("GET /api/v1/user", () => {
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
 
-      expect(responseBody.features.length).toBe(0);
+      expect(responseBody.features.length).toBe(1);
 
       // Session renewal assertions
       const renewdSessionObject = await session.findOneValidByToken(
@@ -102,7 +102,7 @@ describe("GET /api/v1/user", () => {
         id: createdUser.id,
         email: createdUser.email,
         password: createdUser.password,
-        features: createdUser.features,
+        features: ["read:activation_token"],
         username: "UserHalflifeSession",
         created_at: createdUser.created_at.toISOString(),
         updated_at: createdUser.updated_at.toISOString(),
@@ -112,7 +112,7 @@ describe("GET /api/v1/user", () => {
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
 
-      expect(responseBody.features.length).toBe(0);
+      expect(responseBody.features.length).toBe(1);
 
       // Session renewal assertions
       const renewdSessionObject = await session.findOneValidByToken(
