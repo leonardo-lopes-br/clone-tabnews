@@ -30,6 +30,7 @@ describe("POST /api/v1/users", () => {
         id: responseBody.id,
         username: "aluzer",
         email: "dev.leonardo.silva.lopes@gmail.com",
+        features: responseBody.features,
         password: responseBody.password,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
@@ -38,6 +39,8 @@ describe("POST /api/v1/users", () => {
       expect(uuidVersion(responseBody.id)).toBe(4);
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
+
+      expect(responseBody.features.length).toBe(0);
 
       const userInDatabase = await user.findOneByUsername("aluzer");
       const correctPasswordMatch = await password.compare(

@@ -110,6 +110,7 @@ describe("PATCH /api/v1/users/[username]", () => {
         id: responseBody.id,
         username: "uniqueUser2",
         email: createdUser.email,
+        features: createdUser.features,
         password: responseBody.password,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
@@ -118,6 +119,8 @@ describe("PATCH /api/v1/users/[username]", () => {
       expect(uuidVersion(responseBody.id)).toBe(4);
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
+
+      expect(responseBody.features.length).toBe(0);
 
       expect(responseBody.updated_at > responseBody.created_at).toBe(true);
     });
@@ -143,6 +146,7 @@ describe("PATCH /api/v1/users/[username]", () => {
         id: responseBody.id,
         username: createdUser.username,
         email: "uniqueEmail2@gmail.com",
+        features: createdUser.features,
         password: responseBody.password,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
@@ -151,6 +155,8 @@ describe("PATCH /api/v1/users/[username]", () => {
       expect(uuidVersion(responseBody.id)).toBe(4);
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
+
+      expect(responseBody.features.length).toBe(0);
 
       expect(responseBody.updated_at > responseBody.created_at).toBe(true);
     });
@@ -178,6 +184,7 @@ describe("PATCH /api/v1/users/[username]", () => {
         id: responseBody.id,
         username: createdUser.username,
         email: createdUser.email,
+        features: createdUser.features,
         password: responseBody.password,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
@@ -186,6 +193,8 @@ describe("PATCH /api/v1/users/[username]", () => {
       expect(uuidVersion(responseBody.id)).toBe(4);
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
+
+      expect(responseBody.features.length).toBe(0);
 
       expect(responseBody.updated_at > responseBody.created_at).toBe(true);
 
