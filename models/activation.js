@@ -1,5 +1,6 @@
 import database from "infra/database.js";
 import email from "infra/email.js";
+import { NotFoundError } from "infra/errors.js";
 import webserver from "infra/webserver.js";
 
 const EXPIRATION_IN_MILLISECONDS = 60 * 15 * 1000; // 15 minutes
@@ -27,12 +28,12 @@ async function create(userId) {
   }
 }
 
-async function findOneByUserId(userId) {
-  const newToken = await runSelectQuery(userId);
+async function findOneValidById(activationTokenId) {
+  const foundToken = await runSelectQuery(activationTokenId);
 
-  return newToken;
+  return foundToken;
 
-  async function runSelectQuery(userId) {
+  async function runSelectQuery(activationTokenId) {
     const result = await database.query({
       text: `
           SELECT
@@ -40,12 +41,22 @@ async function findOneByUserId(userId) {
           FROM
             user_activation_tokens
           WHERE
-            user_id = $1
+            id = $1
+            AND used_at IS NULL
+            AND expires_at > NOW()
           LIMIT
             1
         ;`,
-      values: [userId],
+      values: [activationTokenId],
     });
+
+    if (result.rowCount === 0) {
+      throw new NotFoundError({
+        message:
+          "O token de ativação utilizado não foi encontrado no sistema ou expirou.",
+        action: "Faça um novo cadastro.",
+      });
+    }
 
     return result.rows[0];
   }
@@ -67,7 +78,7 @@ Equipe FinTab`,
 
 const activation = {
   create,
-  findOneByUserId,
+  findOneValidById,
   sendEmailToUser,
 };
 
