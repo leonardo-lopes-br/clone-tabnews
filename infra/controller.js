@@ -9,6 +9,7 @@ import {
 } from "infra/errors.js";
 import session from "models/session.js";
 import user from "models/user.js";
+import authorization from "models/authorization.js";
 
 function onErrorHandler(error, request, response) {
   if (
@@ -92,17 +93,15 @@ async function injectAnonymousOrUser(request, response, next) {
 
 function canRequest(requestedFeature) {
   return function canRequestMiddleware(request, response, next) {
-    const requestingUserFeatures = request.context?.user?.features;
-    const userCanRequest = requestingUserFeatures?.includes(requestedFeature);
+    const requestingUser = request.context?.user;
 
-    if (!userCanRequest) {
-      throw new ForbiddenError({
-        message: "Você não possui permissão para executar esta ação.",
-        action: `Verifique se o seu usuário possui a feature "${requestedFeature}"`,
-      });
+    if (authorization.can(requestingUser, requestedFeature)) {
+      return next();
     }
-
-    return next();
+    throw new ForbiddenError({
+      message: "Você não possui permissão para executar esta ação.",
+      action: `Verifique se o seu usuário possui a feature "${requestedFeature}"`,
+    });
   };
 }
 
